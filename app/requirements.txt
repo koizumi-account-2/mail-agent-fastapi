@@ -1,0 +1,14 @@
+# API
+fastapi
+uvicorn
+python-jose
+# データベース
+
+# その他
+dotenv
+
+# LLM
+langchain_openai
+langchain_core
+langchain_community
+pydantic
