@@ -1,11 +1,11 @@
-from chains.company_news_chain.agent import CompanyNewsSearchAgent
-from chains.company_info_chain.agent import CompanyInfoSearchAgent
+from chains.company.company_news_chain.agent import CompanyNewsSearchAgent
+from chains.company.company_info_chain.agent import CompanyInfoSearchAgent
 from langchain_core.runnables import RunnableParallel
 from modules.config import model,tavily_retriever,use_dummy
 
 
-from chains.company_news_chain.models import CompanyNewsAnalysisResult,NewsArticle
-from chains.company_info_chain.models import CompanyInfoAnalysisResult
+from chains.company.company_news_chain.models import CompanyNewsAnalysisResult,NewsArticle
+from chains.company.company_info_chain.models import CompanyInfoAnalysisResult
 
 # CompanyInfoAnalysisResult のダミーデータ
 dummy_info = CompanyInfoAnalysisResult(

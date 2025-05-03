@@ -12,3 +12,4 @@ use_dummy = os.getenv("USE_DUMMY") == "true"
 
 tavily_api_key = os.getenv("TAVILY_API_KEY")
 tavily_retriever = TavilySearchAPIRetriever(api_key=tavily_api_key, time_range="month")
+ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
