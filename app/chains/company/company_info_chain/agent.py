@@ -2,7 +2,7 @@ from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
 from langchain_community.retrievers import TavilySearchAPIRetriever
-from chains.company.company_info_chain.models import CompanyInfoAnalysisResult
+from chains.company.models import CompanyInfoAnalysisResult
 from chains.company.company_info_chain.prompt import company_info_prompt
 from langchain_core.runnables import Runnable
 

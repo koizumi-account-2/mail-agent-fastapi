@@ -6,6 +6,7 @@ from features.mail.agent import MailAnalysisAgent
 from features.mail.models import MailMessage
 from modules.config import model
 from router.auth.mail import mail_router
+from router.agent.company import company_router
 from exceptions import http_exception_handler, validation_exception_handler, generic_exception_handler
 app = FastAPI()
 # カスタム例外ハンドラーの登録
@@ -20,11 +21,13 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+# mail系
 app.include_router(mail_router, prefix="/api/auth/mail")
+# company系
+app.include_router(company_router, prefix="/api/agent/company")
+
 @app.get("/api/health")
 async def health():
-    raise HTTPException(status_code=400, detail="Invalid Authorization header")
     return {"message": "ok"}
 
 # メールの分析

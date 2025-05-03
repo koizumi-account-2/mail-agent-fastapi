@@ -1,12 +1,11 @@
 from chains.company.company_news_chain.agent import CompanyNewsSearchAgent
 from chains.company.company_info_chain.agent import CompanyInfoSearchAgent
-from langchain_core.runnables import RunnableParallel
+from langchain_core.runnables import RunnableParallel, RunnableLambda
 from modules.config import model,tavily_retriever,use_dummy
+from chains.company.models import UserInfo
 
-
-from chains.company.company_news_chain.models import CompanyNewsAnalysisResult,NewsArticle
-from chains.company.company_info_chain.models import CompanyInfoAnalysisResult
-
+from chains.company.models import CompanyNewsAnalysisResult,NewsArticle,CompanyInfoAnalysisResult,TravelTimeResult
+from chains.company.map.map_chain import get_travel_time_chain
 # CompanyInfoAnalysisResult のダミーデータ
 dummy_info = CompanyInfoAnalysisResult(
     company_name="損保ジャパン",
@@ -60,6 +59,15 @@ dummy_news = CompanyNewsAnalysisResult(
     ]
 )
 
+dummy_travel_time = TravelTimeResult(
+    start_address="新宿駅",
+    end_address="小田原",
+    travel_time=100,
+    distance_text="100km",
+    duration_text="1時間",
+    duration_seconds=3600
+)
+
 class CompanyInfoFullChain:
     def __init__(self, llm, retriever):
         self.news_agent = CompanyNewsSearchAgent(llm=llm, retriever=retriever)
@@ -70,12 +78,13 @@ class CompanyInfoFullChain:
     def _build_chain(self):
         return RunnableParallel({
             "news": self.news_agent.get_chain(),
-            "info": self.info_agent.get_chain()
-        })
+            "info": self.info_agent.get_chain(),
+            "user_info":RunnableLambda(lambda x: x["user_info"])
+        }).assign(travel_time = get_travel_time_chain)
 
-    async def run(self, company_name):
+    async def run(self, company_name:str, user_info:UserInfo):
         if self.use_dummy:
-            return dummy_news, dummy_info
+            return dummy_news, dummy_info,dummy_travel_time
         else:
-            return await self.chain.ainvoke({"company_name": company_name})
+            return await self.chain.ainvoke({"company_name": company_name, "user_info": user_info})
     
