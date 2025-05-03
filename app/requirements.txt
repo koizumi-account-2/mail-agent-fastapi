@@ -1,7 +1,6 @@
 # API
 fastapi
 uvicorn
-python-jose
 # データベース
 
 # その他

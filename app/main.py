@@ -1,12 +1,19 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware  
 from langchain_openai import ChatOpenAI
 import httpx
-from mail.agent import MailAnalysisAgent
-from mail.models import MailMessage
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from features.mail.agent import MailAnalysisAgent
+from features.mail.models import MailMessage
 from modules.config import model
+from router.auth.mail import mail_router
+from exceptions import http_exception_handler, validation_exception_handler, generic_exception_handler
 app = FastAPI()
-
+# カスタム例外ハンドラーの登録
+app.add_exception_handler(StarletteHTTPException, http_exception_handler)
+app.add_exception_handler(RequestValidationError, validation_exception_handler)
+app.add_exception_handler(Exception, generic_exception_handler)
 
 app.add_middleware(
     CORSMiddleware,
@@ -16,9 +23,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+app.include_router(mail_router, prefix="/api/auth/mail")
 @app.get("/api/health")
 async def health():
+    raise HTTPException(status_code=400, detail="Invalid Authorization header")
     return {"message": "ok"}
 
 # メールの分析

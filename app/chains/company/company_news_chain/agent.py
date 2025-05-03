@@ -2,8 +2,8 @@ from langchain_core.runnables import RunnableLambda
 from langchain_core.output_parsers import PydanticOutputParser
 from langchain_openai import ChatOpenAI
 from langchain_community.retrievers import TavilySearchAPIRetriever
-from chains.company_news_chain.models import CompanyNewsAnalysisResult
-from chains.company_news_chain.prompt import prompt_template
+from chains.company.company_news_chain.models import CompanyNewsAnalysisResult
+from chains.company.company_news_chain.prompt import prompt_template
 from langchain_core.runnables import Runnable
 class CompanyNewsSearchAgent:
     def __init__(self, llm: ChatOpenAI, retriever: TavilySearchAPIRetriever):
