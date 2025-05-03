@@ -13,3 +13,14 @@ use_dummy = os.getenv("USE_DUMMY") == "true"
 tavily_api_key = os.getenv("TAVILY_API_KEY")
 tavily_retriever = TavilySearchAPIRetriever(api_key=tavily_api_key, time_range="month")
 ACCESS_TOKEN = os.getenv("ACCESS_TOKEN")
+GOOGLE_MAP_API_KEY = os.getenv("GOOGLE_MAP_API_KEY")
+
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    handlers=[
+        logging.StreamHandler()
+    ]
+)

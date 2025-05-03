@@ -4,23 +4,35 @@ from modules.config import model,tavily_retriever,ACCESS_TOKEN
 from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_openai import ChatOpenAI
 from chains.company.full_chain import CompanyInfoFullChain
-from typing import Annotated
+from typing import Annotated    
 import asyncio
-
+from langchain_core.runnables import RunnableMap, RunnableLambda, RunnablePassthrough   
+from chains.company.models import UserInfo
 from features.mail.services.imp.gmail_service import GmailService
-import logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-    handlers=[
-        logging.StreamHandler()
-    ]
-)
+def funcA(inputs:dict):
+    print(inputs)
+    return inputs["AAA"]+"PPP"
 
 async def main():
 
-    print("Hello, World!")
+    # print("Hello, World!")
+    # chain = (
+    #     RunnableMap({
+    #         "AAA": lambda x: "XXX",
+    #         "BBB": lambda x: "YYY",
+    #         "CCC": lambda x: "ZZZ",
+    #     })
+    # ).assign(anwser = funcA)
+    # print(chain.invoke({"foo":"va"}))
+    # return
+
+    chain = CompanyInfoFullChain(llm=model, retriever=tavily_retriever)
+    user_info = UserInfo(location="新宿駅") 
+    print(await chain.run("損保ジャパン", user_info))
+    return
+
+
     if ACCESS_TOKEN:
         gmail_service = GmailService(ACCESS_TOKEN)
         mail = await gmail_service.get_gmail_thread_ids()

@@ -7,6 +7,7 @@ from typing import Dict, Any
 import base64, re
 from modules.log import log_async
 
+## メールのプロバイダーごとにサービスを作成する
 class GmailService(EmailService):
     def __init__(self, access_token: str):
         credentials = Credentials(
@@ -16,7 +17,7 @@ class GmailService(EmailService):
         self.service = build("gmail", "v1", credentials=credentials) 
 
     @log_async
-    async def get_gmail_thread_ids(self, max_results: int = 10,next_page_token: str = None) -> List[ThreadListResponse]:
+    async def get_gmail_thread_ids(self, max_results: int = 10,next_page_token: str = None) -> ThreadListResponse:
         """
         GmailのthreadIdのリストを取得する
         """
@@ -30,10 +31,10 @@ class GmailService(EmailService):
         results = self.service.users().threads().list(**query_params).execute()
         threads = results.get("threads", [])
         next_page_token = results.get("nextPageToken")
-        return {
-            "threadIds": [t["id"] for t in threads],
-            "nextPageToken": next_page_token
-        }
+        return ThreadListResponse(
+            threadIds=[t["id"] for t in threads],
+            nextPageToken=next_page_token
+        )
     @log_async
     async def get_mail_message_by_thread_id(self, thread_id: str) -> ThreadDTO:
         """
