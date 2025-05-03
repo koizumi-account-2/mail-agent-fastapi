@@ -1,7 +1,5 @@
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware  
-from langchain_openai import ChatOpenAI
-import httpx
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from features.mail.agent import MailAnalysisAgent

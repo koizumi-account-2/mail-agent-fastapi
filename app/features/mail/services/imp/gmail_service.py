@@ -1,8 +1,8 @@
-from mail.services.email_service import EmailService
+from features.mail.services.email_service import EmailService
 from google.oauth2.credentials import Credentials
 from typing import List
 from googleapiclient.discovery import build
-from mail.schemas.mail_schema import ThreadListResponse, MailMessageDTO, ThreadDTO
+from features.mail.schemas.mail_schema import ThreadListResponse, MailMessageDTO, ThreadDTO
 from typing import Dict, Any
 import base64, re
 from modules.log import log_async

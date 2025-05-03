@@ -1,8 +1,8 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from langchain_core.runnables import RunnablePassthrough
-from mail.models import MailAnalysisResult, MailMessage
-from mail.prompts import prompt_template
+from features.mail.models import MailAnalysisResult, MailMessage
+from features.mail.prompts import prompt_template
 
 class MailAnalysisAgent:
     def __init__(self,llm:ChatOpenAI):

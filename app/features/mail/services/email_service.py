@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict
-from mail.schemas.mail_schema import ThreadListResponse, MailMessageDTO
+from features.mail.schemas.mail_schema import ThreadListResponse, MailMessageDTO
 class EmailService(ABC):
 
     @abstractmethod
