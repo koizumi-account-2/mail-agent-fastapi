@@ -7,6 +7,7 @@ from features.mail.models import MailMessage
 from modules.config import model
 from router.auth.mail import mail_router
 from router.agent.company import company_router
+from router.auth.calendar import calendar_router
 from exceptions import http_exception_handler, validation_exception_handler, generic_exception_handler
 app = FastAPI()
 # カスタム例外ハンドラーの登録
@@ -25,6 +26,8 @@ app.add_middleware(
 app.include_router(mail_router, prefix="/api/auth/mail")
 # company系
 app.include_router(company_router, prefix="/api/agent/company")
+# calendar系
+app.include_router(calendar_router, prefix="/api/agent/calendar")
 
 @app.get("/api/health")
 async def health():
