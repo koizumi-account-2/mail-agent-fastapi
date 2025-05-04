@@ -1,14 +1,15 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict
-from features.calendar.schemas.calendar_schema import CalendarEventListResponse,CalendarEventDTO
+from features.calendar.schemas.calendar_schema import CalendarEventListResponse,CalendarEventDTO,InsertEventDTO
+from features.calendar.models import CalenderEventFilterParams
 class CalendarService(ABC):
 
     @abstractmethod
     async def get_calendar_list(self):
         ...
 
-    @abstractmethod
-    async def get_all_calendar_events(self,params:dict)->CalendarEventListResponse:
+    @abstractmethod 
+    async def get_calendar_events(self,params:CalenderEventFilterParams)->CalendarEventListResponse:
         ...
 
     @abstractmethod
@@ -16,7 +17,7 @@ class CalendarService(ABC):
         ...
 
     @abstractmethod
-    async def get_past_calendar_events(self)->CalendarEventListResponse:
+    async def get_insert_event_candidates(self,event:InsertEventDTO):
         ...
 
 

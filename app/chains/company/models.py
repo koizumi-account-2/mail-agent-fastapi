@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
+from util.common import UserInfo
 
-class UserInfo(BaseModel):
-    location: str = Field(..., description="ユーザーの住所")
 
 class NewsArticle(BaseModel):
     title: str = Field(..., description="ニュース記事のタイトル")

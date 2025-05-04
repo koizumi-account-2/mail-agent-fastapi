@@ -6,9 +6,10 @@ from chains.calendar.models import EventTrend,PastEvent
 from features.calendar.services.imp.google_calendar_service import GoogleCalendarService
 from features.calendar.schemas.calendar_schema import CalendarEventListResponse,CalendarEventDTO
 from chains.calendar.get_event_trend_chain.prompt import weekly_meeting_analysis_prompt
+from datetime import datetime,timezone,timedelta
 from typing import List
 
-
+# 今は30日前までの予定をもとに解析
 class PastEventTrendAgent:   
     def __init__(self, llm: ChatOpenAI, access_token:str):
         self.llm = llm
@@ -22,7 +23,8 @@ class PastEventTrendAgent:
         Tuple[繰り返しイベントの文字列,単発イベントの文字列] で返す 
         """
         calendar_service = GoogleCalendarService(self.access_token)
-        response:CalendarEventListResponse = await calendar_service.get_past_calendar_events()
+        start_date = datetime.now(timezone.utc) - timedelta(days=30)
+        response:CalendarEventListResponse = await calendar_service.get_calendar_events(start_date,30)
 
         print("response",event_to_string(response.events))
         return event_to_string(response.events)
