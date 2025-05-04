@@ -32,14 +32,16 @@ weekly_meeting_analysis_prompt = ChatPromptTemplate.from_template("""
 {{
   "busy_slots": [
     {{
-      "day": "金曜日",
-      "time_range": "10:00-11:00"
+      "day": 4,
+      "start": "10:00",
+      "end": "11:00"
     }},
     ...
   ],
   "frequent_slots": [
     {{
-      "time_range": "13:00-14:00"
+      "start": "13:00",
+      "end": "14:00"
     }},
     ...
   ],
@@ -54,10 +56,10 @@ weekly_meeting_analysis_prompt = ChatPromptTemplate.from_template("""
 
 制約事項：
 - 対象は平日のみです（月〜金）。
-- 曜日はすべて日本語で記載してください（例：月曜日）。
+- 曜日はすべて数値で記載してください（例：0:月曜日,1:火曜日,2:水曜日,3:木曜日,4:金曜日,5:土曜日,6:日曜日）。
 - busy_slots は recurring_events が空の場合は空配列にしてください。
 - busy_slots と frequent_slots の時間帯は重なっていてもかまいません（役割が異なるため）。
-- time_range は `"HH:MM-HH:MM"` 形式。
+- start と end は `"HH:MM"` 形式。
 - 各配列の最大件数は5件までとしてください。
 - frequent_slots の候補は **9:00〜18:00 の間のみ** とし、それ以外の時間帯は含めないでください。
 - title_patterns では **会議タイトルの共通構文（接頭辞、括弧、記号など）を抽出してください**。

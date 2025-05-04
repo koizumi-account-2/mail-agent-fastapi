@@ -27,5 +27,4 @@ class MailAnalysisAgent:
             | self.llm                             # 構造化出力に渡す
         )
         result = chain.invoke({"email_result_str": email_result_str, "my_info": my_info,"latest_message_id": latest_message_id, "existing_tasks_str": existing_tasks_str, "current_situation": current_situation})  # 直接 email_text を渡すだけでOK
-        print(result)
         return result

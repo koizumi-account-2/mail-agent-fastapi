@@ -3,7 +3,7 @@ from chains.company.company_info_chain.agent import CompanyInfoSearchAgent
 from langchain_core.runnables import RunnableParallel, RunnableLambda
 from modules.config import model,tavily_retriever,use_dummy
 from chains.company.models import UserInfo
-
+from chains.calendar.get_candidate.chain import get_candidate_chain
 from chains.company.models import CompanyNewsAnalysisResult,NewsArticle,CompanyInfoAnalysisResult,TravelTimeResult
 from chains.company.map.map_chain import get_travel_time_chain
 # CompanyInfoAnalysisResult のダミーデータ
@@ -77,10 +77,12 @@ class CompanyInfoFullChain:
 
     def _build_chain(self):
         return RunnableParallel({
-            "news": self.news_agent.get_chain(),
-            "info": self.info_agent.get_chain(),
-            "user_info":RunnableLambda(lambda x: x["user_info"])
-        }).assign(travel_time = get_travel_time_chain)
+                "news": self.news_agent.get_chain(),
+                "info": self.info_agent.get_chain(),
+                "user_info":RunnableLambda(lambda x: x["user_info"])
+            }
+        ).assign(travel_time = get_travel_time_chain)
+    
 
     async def run(self, company_name:str, user_info:UserInfo):
         if self.use_dummy:

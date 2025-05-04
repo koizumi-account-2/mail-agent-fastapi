@@ -5,7 +5,8 @@ from datetime import datetime, timezone, timedelta
 from modules.log import log_async
 from features.calendar.schemas.calendar_schema import CalendarEventListResponse,CalendarEventDTO,InsertEventDTO,EventTime
 from features.calendar.models import CalenderEventFilterParams
-from features.calendar.services.common_calendar_service import find_candidate_slots
+from features.calendar.services.common_calendar_service import find_candidate_slots,CandidateDay
+from typing import List
 class GoogleCalendarService(CalendarService):
     def __init__(self, access_token: str):
         credentials = Credentials(
@@ -27,6 +28,7 @@ class GoogleCalendarService(CalendarService):
         カレンダーの全てのイベントを取得する
         """
         duration = params.duration
+        print("duration",duration)
         start_date = params.start_date.isoformat()
 
         time_max = (params.start_date + timedelta(days=duration)).isoformat()
@@ -37,7 +39,7 @@ class GoogleCalendarService(CalendarService):
             "timeMax": time_max,
         }
         results = self.service.events().list(**query_params).execute()
-        print("results",results)
+        print("results",len(results.get("items", [])))
         return CalendarEventListResponse(events=[google_calendar_event_to_calendar_event_dto(event) for event in results.get("items", [])])
 
     @log_async
@@ -48,19 +50,18 @@ class GoogleCalendarService(CalendarService):
         return google_calendar_event_to_calendar_event_dto(self.service.events().get(eventId=event_id).execute())    
 
     @log_async
-    async def get_insert_event_candidates(self,event:InsertEventDTO):
+    async def get_insert_event_candidates(self,event:InsertEventDTO,offset_days:int=2,duration_days:int=7)->List[CandidateDay]:
         """
-        カレンダーのイベントを挿入する候補の時間を取得する
+        今日から２日後以降のカレンダーのイベントを挿入する候補の時間を取得する
         """
         candidate_slots = []
-        start_date = datetime.now(timezone.utc) + timedelta(days=2)
+        start_date = datetime.now(timezone.utc) + timedelta(days=offset_days)
         
         for participant in event.participants:
             # 既存のイベントを取得する
-            existing_event = await self.get_calendar_events(CalenderEventFilterParams(start_date=start_date,duration=7))
-            print("existing_eventの件数：",existing_event.events)
+            existing_event = await self.get_calendar_events(CalenderEventFilterParams(start_date=start_date,duration=duration_days))
             # 候補の時間を取得する
-            candidate_slots.extend(find_candidate_slots(start_date,event,existing_event.events))
+            candidate_slots.extend(find_candidate_slots(start_date,event,existing_event.events,duration_days=duration_days))
         # 複数人の場合はここで調整が必要
         return candidate_slots
 

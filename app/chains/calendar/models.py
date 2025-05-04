@@ -7,11 +7,12 @@ class PastEvent(BaseModel):
 
 
 class BusySlot(BaseModel):
-    day: str    
-    time_range: str
-
+    day: int    
+    start: str
+    end: str
 class FrequentSlot(BaseModel):
-    time_range: str
+    start: str
+    end: str
 
 class EventTrend(BaseModel):
     busy_slots: List[BusySlot]

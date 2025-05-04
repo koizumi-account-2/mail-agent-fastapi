@@ -17,7 +17,7 @@ class CalendarService(ABC):
         ...
 
     @abstractmethod
-    async def get_insert_event_candidates(self,event:InsertEventDTO):
+    async def get_insert_event_candidates(self,event:InsertEventDTO,offset_days:int=2,duration_days:int=7):
         ...
 
 

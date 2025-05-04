@@ -7,6 +7,7 @@ from features.calendar.services.imp.google_calendar_service import GoogleCalenda
 from features.calendar.schemas.calendar_schema import CalendarEventListResponse,CalendarEventDTO
 from chains.calendar.get_event_trend_chain.prompt import weekly_meeting_analysis_prompt
 from datetime import datetime,timezone,timedelta
+from features.calendar.models import CalenderEventFilterParams
 from typing import List
 
 # 今は30日前までの予定をもとに解析
@@ -24,7 +25,8 @@ class PastEventTrendAgent:
         """
         calendar_service = GoogleCalendarService(self.access_token)
         start_date = datetime.now(timezone.utc) - timedelta(days=30)
-        response:CalendarEventListResponse = await calendar_service.get_calendar_events(start_date,30)
+        params = CalenderEventFilterParams(start_date=start_date,duration=30)
+        response:CalendarEventListResponse = await calendar_service.get_calendar_events(params)
 
         print("response",event_to_string(response.events))
         return event_to_string(response.events)
