@@ -9,7 +9,6 @@ class MailMessageDTO(BaseModel):
     date: str
     content: str
 
-
 class ThreadDTO(BaseModel):
     threadId: str
     messages: List[MailMessageDTO]

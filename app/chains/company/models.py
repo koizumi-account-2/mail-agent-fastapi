@@ -1,8 +1,7 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
+from util.common import UserInfo
 
-class UserInfo(BaseModel):
-    location: str = Field(..., description="ユーザーの住所")
 
 class NewsArticle(BaseModel):
     title: str = Field(..., description="ニュース記事のタイトル")
@@ -24,7 +23,6 @@ class CompanyInfoAnalysisResult(BaseModel):
 class TravelTimeResult(BaseModel):
     start_address: str = Field(..., description="出発地点")
     end_address: str = Field(..., description="目的地")
-    travel_time: int = Field(..., description="対象となった企業からユーザーの所在地までの所要時間")
     distance_text: str = Field(..., description="対象となった企業からユーザーの所在地までの距離")
     duration_text: str = Field(..., description="対象となった企業からユーザーの所在地までの所要時間")
     duration_seconds: int = Field(..., description="対象となった企業からユーザーの所在地までの所要時間(秒)")
