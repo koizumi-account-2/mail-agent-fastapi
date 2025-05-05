@@ -2,6 +2,10 @@ from fastapi import APIRouter, Header, HTTPException, Depends
 from features.mail.services.imp.gmail_service import GmailService
 from util.common import get_access_token
 from features.mail.schemas.mail_schema import ThreadListResponse
+from features.mail.agent import MailAnalysisAgent
+from features.mail.schemas.mail_schema import MailMessage
+from modules.config import model
+from fastapi import Request
 mail_router = APIRouter()
 
 @mail_router.post("/test")
@@ -12,6 +16,19 @@ async def get_mail_thread_ids(access_token: str = Depends(get_access_token)):
     mail_message = await gmail_service.get_mail_message_by_thread_id(mail["threadIds"][1])
     return mail_message
 
+@mail_router.post("/analyze")
+async def mail_analyze(request: Request):
+    body = await request.json()
+    email_messages = [MailMessage(**message) for message in body["email_messages"]]
+    current_situation = body["current_situation"]
+    print("current_situation",current_situation)
+    my_info = body["my_info"]
+    latest_message_id = current_situation["latest_message_id"]
+    existing_tasks = current_situation["existing_tasks"]
+    my_info = "A株式会社 営業部 A"
+    agent = MailAnalysisAgent(llm = model)
+    result = agent.run(email_messages=email_messages, my_info=my_info, latest_message_id=latest_message_id, existing_tasks=existing_tasks, current_situation=current_situation)
+    return result
 
 @mail_router.get("/threads")
 async def get_mail_thread_ids(access_token: str = Depends(get_access_token)):
