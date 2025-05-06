@@ -14,3 +14,4 @@ class Task(BaseModel):
 class MailAnalysisResult(BaseModel):
     tasks: list[Task] = Field(default_factory=list, description="残タスク一覧")
     summary: str = Field(...,description="メールのまとめ")
+    latest_message_id: str = Field(...,description="最新のメールのID")

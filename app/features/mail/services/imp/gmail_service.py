@@ -42,7 +42,7 @@ class GmailService(EmailService):
         """
         results = self.service.users().threads().get(userId="me", id=thread_id).execute()
         messages = results.get("messages", [])
-        sorted_messages = sorted(messages, key=lambda msg: int(msg.get("internalDate", 0)))
+        sorted_messages = sorted(messages, key=lambda msg: int(msg.get("internalDate", 0)),reverse=True)
         return ThreadDTO(
             threadId=thread_id,
             messages=[convert_message_to_dto(m) for m in sorted_messages]
