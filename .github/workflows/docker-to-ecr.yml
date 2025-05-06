@@ -2,7 +2,7 @@ name: Build and Push Docker Image to GHCR
 
 on:
   push:
-    branches: [main]
+    branches: [dev-action]
 
 jobs:
   deploy:
@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       IMAGE_NAME: ghcr.io/${{ github.repository }}:latest
+      OPEN_API_KEY: ${{ secrets.OPEN_API_KEY }}
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      USE_DUMMY: ${{ secrets.USE_DUMMY }}
+      ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+      GOOGLE_MAP_API_KEY: ${{ secrets.GOOGLE_MAP_API_KEY }}
 
     permissions:
       contents: read
@@ -28,7 +33,13 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t $IMAGE_NAME .
+          docker build \
+            --build-arg OPEN_API_KEY=${{ secrets.OPEN_API_KEY }} \
+            --build-arg TAVILY_API_KEY=${{ secrets.TAVILY_API_KEY }} \
+            --build-arg USE_DUMMY=${{ secrets.USE_DUMMY }} \
+            --build-arg ACCESS_TOKEN=${{ secrets.ACCESS_TOKEN }} \
+            --build-arg GOOGLE_MAP_API_KEY=${{ secrets.GOOGLE_MAP_API_KEY }} \
+            -t $IMAGE_NAME .
 
       - name: Push Docker image to GHCR
         run: |
