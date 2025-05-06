@@ -5,11 +5,11 @@ from modules.config import model
 from features.calendar.services.imp.google_calendar_service import GoogleCalendarService
 from pydantic import BaseModel
 from chains.calendar.models import EventTrend
-from datetime import datetime
+from datetime import datetime,timedelta,timezone
 import math
 from typing import List
 from features.calendar.services.common_calendar_service import CandidateDay,get_candidate_days
-
+from features.calendar.models import CalenderEventFilterParams
 from features.calendar.schemas.calendar_schema import InsertEventDTO
 
 
@@ -19,6 +19,18 @@ class AvailableSlotsRequest(BaseModel):
     trend:EventTrend        
     travel_time_seconds:int
 
+@calendar_router.get("/")
+async def get_all_events(offset_days:int=2,duration_days:int=30,access_token: str = Depends(get_access_token)):
+    """
+    今後のイベントを取得する
+    """
+    google_calendar_service = GoogleCalendarService(access_token)
+    params = CalenderEventFilterParams(
+        start_date=datetime.now(timezone.utc) + timedelta(days=offset_days),
+        duration=duration_days
+    )
+    result = await google_calendar_service.get_calendar_events(params)
+    return result
 
 @calendar_router.get("/past")
 async def get_past_events(access_token: str = Depends(get_access_token)):
@@ -39,7 +51,7 @@ async def get_available_slots(insert_event:InsertEventDTO,offset_days:int=2,dura
     result = await google_calendar_service.get_insert_event_candidates(insert_event,offset_days,duration_days)
     return result
 
-@calendar_router.get("/candidates")
+@calendar_router.post("/candidates")
 async def get_available_slots(request:AvailableSlotsRequest,max_candidates_per_day:int=3,offset_days:int=2,duration_days:int=7,access_token: str = Depends(get_access_token)):
     """
     候補日を取得する
