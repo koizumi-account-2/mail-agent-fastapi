@@ -9,6 +9,7 @@ from router.auth.mail import mail_router
 from router.agent.company import company_router
 from router.auth.calendar import calendar_router
 from exceptions import http_exception_handler, validation_exception_handler, generic_exception_handler
+from fastapi.responses import JSONResponse  
 app = FastAPI()
 # カスタム例外ハンドラーの登録
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
