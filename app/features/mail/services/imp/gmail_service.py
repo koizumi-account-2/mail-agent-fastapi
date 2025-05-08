@@ -17,6 +17,27 @@ class GmailService(EmailService):
         self.service = build("gmail", "v1", credentials=credentials) 
 
     @log_async
+    async def get_gmail_by_query(self, query: str, max_results: int = 10,next_page_token: str = None) -> ThreadListResponse:
+        """
+        GmailのthreadIdのリストを取得する
+        """
+        query_params = {
+            "q": query,
+            "userId": "me",
+            "maxResults": max_results,
+        }
+        if next_page_token:
+            query_params["pageToken"] = next_page_token
+
+        results = self.service.users().threads().list(**query_params).execute()
+        threads = results.get("threads", [])
+        next_page_token = results.get("nextPageToken")
+        return ThreadListResponse(
+            threadIds=[t["id"] for t in threads],
+            nextPageToken=next_page_token
+        )
+
+    @log_async
     async def get_gmail_thread_ids(self, max_results: int = 10,next_page_token: str = None) -> ThreadListResponse:
         """
         GmailのthreadIdのリストを取得する
