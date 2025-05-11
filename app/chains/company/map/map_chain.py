@@ -7,7 +7,7 @@ async def get_travel_time_chain(inputs):
     """
     print("get_travel_time_chain",inputs)
     user_info = inputs["user_info"]
-    location = inputs["info"].location
+    location = inputs["address"] if inputs["address"] else inputs["info"].location
     params = CalculateTravelTimeParams(
         origin=user_info.location,
         destination=location,

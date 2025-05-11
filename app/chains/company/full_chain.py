@@ -6,6 +6,7 @@ from chains.company.models import UserInfo
 from chains.calendar.get_candidate.chain import get_candidate_chain
 from chains.company.models import CompanyNewsAnalysisResult,NewsArticle,CompanyInfoAnalysisResult,TravelTimeResult
 from chains.company.map.map_chain import get_travel_time_chain
+from typing import Optional
 # CompanyInfoAnalysisResult のダミーデータ
 dummy_info = CompanyInfoAnalysisResult(
     company_name="損保ジャパン",
@@ -67,7 +68,7 @@ dummy_travel_time = TravelTimeResult(
     duration_text="1時間",
     duration_seconds=3600
 )
-
+    
 class CompanyInfoFullChain:
     def __init__(self, llm, retriever):
         self.news_agent = CompanyNewsSearchAgent(llm=llm, retriever=retriever)
@@ -79,14 +80,15 @@ class CompanyInfoFullChain:
         return RunnableParallel({
                 "news": self.news_agent.get_chain(),
                 "info": self.info_agent.get_chain(),
-                "user_info":RunnableLambda(lambda x: x["user_info"])
+                "user_info":RunnableLambda(lambda x: x["user_info"]),
+                "address":RunnableLambda(lambda x: x["address"])
             }
         ).assign(travel_time = get_travel_time_chain)
     
 
-    async def run(self, company_name:str, user_info:UserInfo):
+    async def run(self, company_name:str, user_info:UserInfo,address:Optional[str]=None ):
         if self.use_dummy:
             return dummy_news, dummy_info,dummy_travel_time
         else:
-            return await self.chain.ainvoke({"company_name": company_name, "user_info": user_info})
+            return await self.chain.ainvoke({"company_name": company_name, "user_info": user_info,"address":address})
     

@@ -63,12 +63,16 @@ async def get_available_slots(request:AvailableSlotsRequest,max_candidates_per_d
     google_calendar_service = GoogleCalendarService(access_token)
     result:List[CandidateDay]  = await google_calendar_service.get_insert_event_candidates(request.insert_event,offset_days,duration_days)
     print("CandidateDay",len(result))
-    candidate_days = get_candidate_days(trend,result,max_candidates_per_day)
+    candidate_days,candidate_days_all = get_candidate_days(trend,result,max_candidates_per_day)
     print("candidate_days",len(candidate_days))
-    return candidate_days
+    print("candidate_days_all",len(candidate_days_all))
+    return {
+        "candidate_days":candidate_days,
+        "candidate_days_all":candidate_days_all
+    }
 
 
 # 移動時間を30分単位で切り上げて、0.5時間単位に変換する
 def get_duration(travel_time_seconds:int,block_size_minutes:int=30):
-    blocks = math.ceil(travel_time_seconds / (block_size_minutes * 60))  # 30分単位のブロック数
+    blocks = math.ceil(travel_time_seconds / (block_size_minutes * 60)) + 1 # 30分単位のブロック数
     return blocks * block_size_minutes  # 分に変換   

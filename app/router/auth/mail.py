@@ -40,7 +40,7 @@ async def mail_analyze(thread_id: str, request: Request,access_token: str = Depe
     my_info = body["my_info"]
     latest_message_id = current_situation["latest_message_id"]
     existing_tasks = current_situation["existing_tasks"]
-    my_info = "A株式会社 営業部 A"
+    my_info = "エスコ・ジャパン株式会社 営業担当"
     agent = MailAnalysisAgent(llm = model)
     result = agent.run(email_messages=response.messages, my_info=my_info, latest_message_id=latest_message_id, existing_tasks=existing_tasks, current_situation=current_situation)
     result.latest_message_id = response.messages[0].id

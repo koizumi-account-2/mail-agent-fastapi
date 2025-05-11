@@ -4,10 +4,12 @@ from features.calendar.schemas.calendar_schema import CalendarEventDTO,InsertEve
 from typing import List,Tuple
 from chains.calendar.models import EventTrend
 from datetime import datetime,timedelta,time
-import jpholiday
+import jpholiday    
 import math
+import logging
+import copy
 #　テストが必要
-
+logger = logging.getLogger(__name__)
 start_hour = 9
 end_hour = 18
 slot_minutes = 30
@@ -65,10 +67,11 @@ def is_slot_available(candidate_slot, existing_events):
     # 全イベントと重ならなければOK
     return True
 # 候補日の取得
-def get_candidate_days(trend: EventTrend, candidates: List[CandidateDay],max_candidates_per_day:int=3) -> List[CandidateDay]:
+def get_candidate_days(trend: EventTrend, candidates: List[CandidateDay],max_candidates_per_day:int=3) -> Tuple[List[CandidateDay],List[CandidateDay]]:
     
-
+    logger.info(f"get_candidate_days: {len(candidates)} candidates, max_candidates_per_day: {max_candidates_per_day}")
     result:List[CandidateDay] = []
+    result_all:List[CandidateDay] = []
     for candidate_day in candidates:
         print("candidate_day",len(candidate_day.candidates))
         print("candidate_day",candidate_day.candidates)
@@ -92,12 +95,15 @@ def get_candidate_days(trend: EventTrend, candidates: List[CandidateDay],max_can
                 if slot.start == filter_start:
                     slot_list.append(slot)
                     filtered_candidates.remove(slot)
-                    if len(slot_list) == max_candidates_per_day: break
-        
+                    # if len(slot_list) > max_candidates_per_day: break
         for slot in filtered_candidates:
             slot_list.append(slot)
-            if len(slot_list) == max_candidates_per_day: break
+            # if len(slot_list) > max_candidates_per_day: break
         
-        candidate_day.candidates = slot_list
-        result.append(candidate_day)
-    return result
+        candidate_day_copy_all = copy.deepcopy(candidate_day)       
+        candidate_day_copy_all.candidates = slot_list
+        result_all.append(candidate_day_copy_all)
+        candidate_day_copy = copy.deepcopy(candidate_day)  
+        candidate_day_copy.candidates = slot_list[:max_candidates_per_day-1]
+        result.append(candidate_day_copy)
+    return result,result_all

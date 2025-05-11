@@ -8,6 +8,7 @@ from modules.config import model
 from router.auth.mail import mail_router
 from router.agent.company import company_router
 from router.auth.calendar import calendar_router
+from router.agent.mail import mail_agent_router
 from exceptions import http_exception_handler, validation_exception_handler, generic_exception_handler
 from fastapi.responses import JSONResponse  
 app = FastAPI()
@@ -29,6 +30,8 @@ app.include_router(mail_router, prefix="/api/auth/mail")
 app.include_router(company_router, prefix="/api/agent/company")
 # calendar系
 app.include_router(calendar_router, prefix="/api/agent/calendar")
+# mail agent系
+app.include_router(mail_agent_router, prefix="/api/agent/mail")
 
 @app.get("/api/health")
 async def health():
